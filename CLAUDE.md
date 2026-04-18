@@ -8,7 +8,7 @@
 3. **phase3_prompt_build** — 모델별 generation job 빌드 (레이어/배리에이션)
 4. **phase4_generate** — 로컬 MPS/CPU에서 AudioCraft/MusicGen 생성 (해시 캐시)
 5. **phase5_post_process** — normalize/trim/fade/loop/layer_mix/format_convert 체인
-6. **phase6_engine_import** — Unity/Godot 오디오 폴더 + .meta/.import 생성
+6. **phase6_engine_import** — Unity 오디오 폴더 + .meta 생성 (Addressables/FMOD/Wwise 지원)
 
 ## 실행
 ```bash
@@ -24,8 +24,6 @@ python audio_studio.py --project my_clicker --input audio_assets.yaml --phases 5
 # 레퍼런스 게임 기반
 python audio_studio.py --project my_clicker --input audio_assets.yaml --reference cookie-clicker
 
-# Godot 엔진 export
-python audio_studio.py --project my_clicker --input audio_assets.yaml --engine godot
 ```
 
 ## 카테고리

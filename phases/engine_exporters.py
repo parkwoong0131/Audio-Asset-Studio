@@ -1,4 +1,4 @@
-"""엔진별 export 백엔드 모음 — Unity/Addressables/Godot/FMOD/Wwise.
+"""엔진별 export 백엔드 모음 — Unity/Addressables/FMOD/Wwise.
 
 런타임 베리에이션(pitch/volume 랜덤 범위)을 카테고리별 프리셋으로 자동 기입.
 """
@@ -108,67 +108,6 @@ def export_unity(processed: list[dict], manifest: dict, export_dir: Path, addres
             "project": manifest.get("project_id"),
             "entries": addr_entries,
         }, indent=2))
-    return exported
-
-
-# ========== Godot ==========
-
-GODOT_IMPORT_TEMPLATE = """\
-[remap]
-importer="ogg_vorbis"
-type="AudioStreamOGGVorbis"
-path="res://.import/{filename}-{hash}.oggstr"
-
-[params]
-loop={loop}
-loop_offset=0.0
-"""
-
-GODOT_PLAYLIST_RES = """\
-[gd_resource type="AudioStreamPlaylist" format=3]
-
-[resource]
-streams = [{streams}]
-loop = {loop}
-shuffle = true
-fade_time = 0.1
-"""
-
-
-def export_godot(processed: list[dict], manifest: dict, export_dir: Path) -> list[str]:
-    exported: list[str] = []
-    assets_meta = manifest.get("assets_meta", {})
-    by_category: dict[str, list[str]] = {}
-
-    for entry in processed:
-        fpath = Path(entry.get("processed") or entry.get("output", ""))
-        if not fpath.exists():
-            continue
-        asset_id = entry["asset_id"]
-        meta = assets_meta.get(asset_id, {})
-        cat = meta.get("category", "sfx_ui")
-        subdir = "sfx" if cat.startswith("sfx_") else "bgm"
-        dest_dir = export_dir / "audio" / subdir
-        dest_dir.mkdir(parents=True, exist_ok=True)
-        dest = dest_dir / fpath.name
-        shutil.copy2(fpath, dest)
-
-        h = hashlib.md5(fpath.name.encode()).hexdigest()[:8]
-        (dest_dir / f"{fpath.name}.import").write_text(GODOT_IMPORT_TEMPLATE.format(
-            filename=fpath.stem, hash=h, loop="true" if meta.get("loop") else "false",
-        ))
-        exported.append(str(dest))
-        by_category.setdefault(cat, []).append(f"res://audio/{subdir}/{fpath.name}")
-
-    # AudioStreamPlaylist (BGM adaptive/loop 묶음)
-    for cat, streams in by_category.items():
-        if not cat.startswith("bgm_") or len(streams) < 2:
-            continue
-        path = export_dir / "audio" / "bgm" / f"playlist_{cat}.tres"
-        path.write_text(GODOT_PLAYLIST_RES.format(
-            streams=", ".join(f'preload("{s}")' for s in streams),
-            loop="true",
-        ))
     return exported
 
 

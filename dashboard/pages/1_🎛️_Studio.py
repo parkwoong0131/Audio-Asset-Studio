@@ -36,7 +36,7 @@ with st.sidebar:
     st.divider()
     st.markdown("**Run controls**")
     backend = st.selectbox("Backend", ["local", "warm", "runpod"], key="run_backend")
-    engine = st.selectbox("Engine", ["unity", "unity_addr", "godot", "fmod", "wwise"], key="run_engine")
+    engine = st.selectbox("Engine", ["unity", "unity_addr", "fmod", "wwise"], key="run_engine")
     loudness = st.selectbox("Loudness", ["mobile (-14)", "console (-16)", "pc (-18)", "broadcast (-23)"])
     loudness_val = {"mobile": -14, "console": -16, "pc": -18, "broadcast": -23}[loudness.split()[0]]
     st.divider()

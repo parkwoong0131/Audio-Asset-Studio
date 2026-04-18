@@ -3,7 +3,6 @@
 지원 엔진:
     unity        — Assets/Audio + .meta (+ Addressables groups)
     unity_addr   — Unity + Addressables enabled
-    godot        — audio/ + .import + AudioStreamPlaylist
     fmod         — FMOD Studio 폴더 + events.json
     wwise        — Wwise WorkUnit XML + Originals/
 """
@@ -14,7 +13,7 @@ from pathlib import Path
 
 from shared.pipeline_helpers import read_json, write_json
 
-from .engine_exporters import export_fmod, export_godot, export_unity, export_wwise
+from .engine_exporters import export_fmod, export_unity, export_wwise
 
 log = logging.getLogger(__name__)
 
@@ -42,8 +41,6 @@ def run(
         exported = export_unity(processed_files, manifest, export_dir, addressables=False)
     elif engine in ("unity_addr", "addressables"):
         exported = export_unity(processed_files, manifest, export_dir, addressables=True)
-    elif engine == "godot":
-        exported = export_godot(processed_files, manifest, export_dir)
     elif engine == "fmod":
         exported = export_fmod(processed_files, manifest, export_dir)
     elif engine == "wwise":

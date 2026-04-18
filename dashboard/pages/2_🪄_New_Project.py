@@ -82,10 +82,10 @@ elif wiz["step"] == 2:
     st.subheader("2 / 3 — 플랫폼")
     wiz["engine"] = st.radio(
         "게임 엔진",
-        ["unity", "unity_addr", "godot", "fmod", "wwise"],
+        ["unity", "unity_addr", "fmod", "wwise"],
         format_func=lambda k: {
             "unity": "Unity", "unity_addr": "Unity + Addressables",
-            "godot": "Godot", "fmod": "FMOD Studio", "wwise": "Wwise",
+            "fmod": "FMOD Studio", "wwise": "Wwise",
         }[k], horizontal=True,
     )
     wiz["platform"] = st.radio(

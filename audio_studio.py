@@ -37,7 +37,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--phases", default=None, help="실행할 phase 번호 (예: 1,2,3 또는 5,6)")
     p.add_argument("--preview", action="store_true", help="프리뷰 모드 (저품질 빠른 생성)")
     p.add_argument("--reference", default=None, help="레퍼런스 게임 (예: cookie-clicker)")
-    p.add_argument("--engine", default="unity", choices=["unity", "unity_addr", "godot", "fmod", "wwise"], help="엔진 (기본: unity)")
+    p.add_argument("--engine", default="unity", choices=["unity", "unity_addr", "fmod", "wwise"], help="엔진 (기본: unity)")
     p.add_argument("--output", default=None, help="출력 디렉토리 (기본: output/<project>)")
     p.add_argument(
         "--backend",
