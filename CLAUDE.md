@@ -1,6 +1,6 @@
 # Audio Asset Studio
 
-프롬프트 기반 게임 오디오 에셋 자동 생성 파이프라인. Game-Asset-Studio의 오디오 버전.
+프롬프트 기반 게임 오디오 에셋 자동 생성 파이프라인. Art-Asset-Studio의 오디오 버전.
 
 ## Phases
 1. **phase1_audio_palette** — 장르별 오디오 톤 프리셋 선택
