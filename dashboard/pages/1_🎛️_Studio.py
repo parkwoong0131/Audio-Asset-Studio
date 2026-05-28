@@ -67,6 +67,9 @@ with st.sidebar:
     loudness_platform, loudness_val = LOUDNESS_OPTIONS[loudness]
     st.divider()
     st.page_link("app.py", label="← All projects", icon="🏠")
+    st.page_link("pages/5_🧮_Bulk_Authoring.py", label="Bulk Authoring", icon="🧮")
+    st.page_link("pages/6_🧪_Review_Cockpit.py", label="Review Cockpit", icon="🧪")
+    st.page_link("pages/7_🧵_Queue_Manager.py", label="Queue Manager", icon="🧵")
 
 # ----- header -----
 col_l, col_r = st.columns([3, 2])

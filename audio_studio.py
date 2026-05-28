@@ -242,6 +242,20 @@ def main() -> None:
             out_dir=out_dir,
         )
 
+    if 4 in phases and gen_report_path.exists() and manifest_path.exists():
+        try:
+            from shared.prompt_library import safe_ingest_run
+
+            added = safe_ingest_run(
+                report_path=gen_report_path,
+                manifest_path=manifest_path,
+                extras={"project": project_id, "source": "pipeline_auto"},
+            )
+            if added:
+                log.info("Prompt library updated: %d prompt(s)", added)
+        except Exception as e:
+            log.info("Prompt library ingest skipped: %s", e)
+
     # Phase 6: 엔진 임포트
     if 6 in phases and post_report_path.exists():
         from phases.phase6_engine_import import run as run_p6

@@ -41,6 +41,9 @@ with st.sidebar:
     st.page_link("pages/1_🎛️_Studio.py", label="Studio", icon="🎛️")
     st.page_link("pages/2_🪄_New_Project.py", label="New Project", icon="🪄")
     st.page_link("pages/3_📚_Prompt_Library.py", label="Prompt Library", icon="📚")
+    st.page_link("pages/5_🧮_Bulk_Authoring.py", label="Bulk Authoring", icon="🧮")
+    st.page_link("pages/6_🧪_Review_Cockpit.py", label="Review Cockpit", icon="🧪")
+    st.page_link("pages/7_🧵_Queue_Manager.py", label="Queue Manager", icon="🧵")
     st.page_link("pages/4_⚙️_Settings.py", label="Settings", icon="⚙️")
 
 # ----- header -----

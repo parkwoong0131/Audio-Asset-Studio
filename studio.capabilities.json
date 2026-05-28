@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0",
+  "studio": {
+    "id": "audio_asset_studio",
+    "name": "Audio Asset Studio",
+    "kind": "audio",
+    "root_path": "/Users/woong/Desktop/Product/Local App/Audio-Asset-Studio",
+    "version": "1.0.0"
+  },
+  "capabilities": [
+    {
+      "id": "monster_sfx_pack",
+      "label": "몬스터 SFX 팩",
+      "description": "기획 요소의 이동, 공격, 피격, 사망 액션에 맞는 SFX 작업 요청을 생성합니다.",
+      "complexity": "quick",
+      "workflow": "sfx_pack",
+      "inputs": [
+        { "key": "project", "label": "프로젝트", "type": "text", "required": true, "source": "context.project" },
+        { "key": "engine", "label": "엔진", "type": "text", "required": true, "source": "context.engine" },
+        { "key": "element", "label": "기획 요소", "type": "text", "required": true, "source": "ux.element" },
+        { "key": "genre", "label": "장르", "type": "text", "required": true, "source": "ux.genre" },
+        { "key": "style", "label": "오디오 팔레트", "type": "text", "required": true, "source": "ux.style" },
+        { "key": "actions", "label": "액션 목록", "type": "multi_select", "required": true, "source": "ux.actions" },
+        { "key": "target_experience", "label": "타깃 감정", "type": "text", "required": false, "source": "ux.target_experience" }
+      ],
+      "outputs": ["sfx_prompt_pack", "wav_candidates", "audio_manifest"],
+      "launch": { "mode": "preset", "game_dev_preset": "audio" },
+      "deep_link": "/Users/woong/Desktop/Product/Local App/Audio-Asset-Studio"
+    },
+    {
+      "id": "ui_feedback_sfx",
+      "label": "UI 피드백 SFX",
+      "description": "버튼, 보상, 실패, 확인 같은 UI 피드백 사운드 요청을 생성합니다.",
+      "complexity": "quick",
+      "workflow": "ui_feedback_pack",
+      "inputs": [
+        { "key": "project", "label": "프로젝트", "type": "text", "required": true, "source": "context.project" },
+        { "key": "engine", "label": "엔진", "type": "text", "required": true, "source": "context.engine" },
+        { "key": "genre", "label": "장르", "type": "text", "required": true, "source": "ux.genre" },
+        { "key": "style", "label": "오디오 팔레트", "type": "text", "required": true, "source": "ux.style" },
+        { "key": "target_experience", "label": "타깃 감정", "type": "text", "required": false, "source": "ux.target_experience" }
+      ],
+      "outputs": ["ui_sfx_prompt_pack", "wav_candidates", "audio_manifest"],
+      "launch": { "mode": "preset", "game_dev_preset": "audio" },
+      "deep_link": "/Users/woong/Desktop/Product/Local App/Audio-Asset-Studio"
+    },
+    {
+      "id": "combat_loop_bgm",
+      "label": "전투 루프 BGM",
+      "description": "게임 장르와 타깃 감정에 맞는 짧은 전투 루프 BGM 작업 요청을 생성합니다.",
+      "complexity": "advanced",
+      "workflow": "bgm_loop_pack",
+      "inputs": [
+        { "key": "project", "label": "프로젝트", "type": "text", "required": true, "source": "context.project" },
+        { "key": "genre", "label": "장르", "type": "text", "required": true, "source": "ux.genre" },
+        { "key": "style", "label": "오디오 팔레트", "type": "text", "required": true, "source": "ux.style" },
+        { "key": "target_experience", "label": "타깃 감정", "type": "text", "required": true, "source": "ux.target_experience" }
+      ],
+      "outputs": ["bgm_prompt_pack", "loop_candidates", "audio_manifest"],
+      "launch": { "mode": "external", "command_label": "Audio Studio에서 세부 설정" },
+      "deep_link": "/Users/woong/Desktop/Product/Local App/Audio-Asset-Studio"
+    }
+  ]
+}

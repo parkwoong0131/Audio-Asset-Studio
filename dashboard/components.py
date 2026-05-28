@@ -113,7 +113,13 @@ def ab_viewer(entry: dict) -> None:
 def prompt_suggester(query: str, category: str | None, k: int = 5) -> list[dict]:
     """프롬프트 라이브러리에서 유사 프롬프트 top-k."""
     try:
-        from shared.prompt_library import PromptLibrary
+        from shared.prompt_library import PromptLibrary, prompt_library_status
+
+        status = prompt_library_status()
+        if not status.get("can_search"):
+            missing = ", ".join(status.get("missing") or [])
+            st.caption(f"(prompt library 검색 비활성: {missing or 'laion-clap/chromadb 확인 필요'})")
+            return []
         lib = PromptLibrary()
         return lib.recommend(query, category=category, k=k)
     except Exception as e:

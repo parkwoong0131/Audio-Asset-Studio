@@ -39,6 +39,7 @@ deps = {
     "laion-clap": _has("laion_clap"),
     "demucs": _has("demucs"),
     "chromadb": _has("chromadb"),
+    "openpyxl": _has("openpyxl"),
     "streamlit": True,
     "ffmpeg (CLI)": shutil.which("ffmpeg") is not None,
 }
@@ -98,7 +99,31 @@ st.subheader("Cache & outputs")
 out_dir = ROOT / "output"
 total_files = sum(1 for _ in out_dir.rglob("*")) if out_dir.exists() else 0
 st.metric("Output files", total_files)
+confirm_key = "confirm_clear_outputs"
+confirm_phrase_key = "confirm_clear_outputs_phrase"
 if st.button("🗑️ Clear all outputs", type="secondary"):
-    if out_dir.exists():
-        shutil.rmtree(out_dir)
-    st.success("지워짐 (다음 실행부터 재생성)")
+    st.session_state[confirm_key] = True
+
+if st.session_state.get(confirm_key):
+    st.warning("`output/` 아래 생성물, 리포트, 큐 로그를 전부 지워. 되돌릴 수 없어.")
+    st.text_input("확인 입력", key=confirm_phrase_key, placeholder="CLEAR")
+    danger_cols = st.columns([1, 1, 2])
+    if danger_cols[0].button(
+        "정말 삭제",
+        type="primary",
+        disabled=st.session_state.get(confirm_phrase_key, "") != "CLEAR",
+    ):
+        if out_dir.exists():
+            shutil.rmtree(out_dir)
+        st.session_state[confirm_key] = False
+        st.session_state.pop(confirm_phrase_key, None)
+        st.success("지워짐 (다음 실행부터 재생성)")
+        st.rerun()
+    if danger_cols[1].button("취소"):
+        st.session_state[confirm_key] = False
+        st.session_state.pop(confirm_phrase_key, None)
+        st.rerun()
+
+prompt_lib_root = Path.home() / ".audio_asset_studio" / "prompt_library"
+if prompt_lib_root.exists():
+    st.caption(f"Prompt Library path: `{prompt_lib_root}`")

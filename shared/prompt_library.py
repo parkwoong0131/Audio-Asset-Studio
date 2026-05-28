@@ -17,6 +17,46 @@ DEFAULT_ROOT = Path(os.environ.get(
 ))
 
 
+def _dependency_status(module_name: str) -> tuple[bool, str | None]:
+    try:
+        __import__(module_name)
+        return True, None
+    except Exception as exc:
+        return False, str(exc)
+
+
+def prompt_library_status(root: Path = DEFAULT_ROOT) -> dict[str, Any]:
+    chromadb_ok, chromadb_error = _dependency_status("chromadb")
+    clap_ok, clap_error = _dependency_status("laion_clap")
+    status: dict[str, Any] = {
+        "root": str(root),
+        "count": 0,
+        "can_open": chromadb_ok,
+        "can_search": chromadb_ok and clap_ok,
+        "can_ingest": chromadb_ok and clap_ok,
+        "missing": [],
+        "error": None,
+        "packages": {
+            "chromadb": {"ok": chromadb_ok, "error": chromadb_error},
+            "laion-clap": {"ok": clap_ok, "error": clap_error},
+        },
+    }
+    for name, info in status["packages"].items():
+        if not info["ok"]:
+            status["missing"].append(name)
+    if not status["can_open"]:
+        return status
+    try:
+        library = PromptLibrary(root=root)
+        status["count"] = library.count()
+    except Exception as exc:
+        status["can_open"] = False
+        status["can_search"] = False
+        status["can_ingest"] = False
+        status["error"] = str(exc)
+    return status
+
+
 class PromptLibrary:
     def __init__(self, root: Path = DEFAULT_ROOT, collection: str = "prompts") -> None:
         root.mkdir(parents=True, exist_ok=True)
@@ -28,6 +68,9 @@ class PromptLibrary:
             name=collection,
             metadata={"hnsw:space": "cosine"},
         )
+
+    def count(self) -> int:
+        return int(self.col.count())
 
     def _embed(self, text: str) -> list[float]:
         from .scoring import clap_text_embed
@@ -88,8 +131,26 @@ class PromptLibrary:
             })
         return out
 
+    def recent(self, limit: int = 20) -> list[dict]:
+        r = self.col.get(limit=limit, include=["documents", "metadatas"])
+        out: list[dict] = []
+        for pid, doc, meta in zip(
+            r.get("ids", []),
+            r.get("documents", []),
+            r.get("metadatas", []),
+        ):
+            out.append({"id": pid, "prompt": doc, **(meta or {})})
+        return out
 
-def ingest_run(library: PromptLibrary, report_path: Path, manifest_path: Path, min_score: float = 0.55) -> int:
+
+def ingest_run(
+    library: PromptLibrary,
+    report_path: Path,
+    manifest_path: Path,
+    min_score: float = 0.55,
+    *,
+    extras: dict[str, Any] | None = None,
+) -> int:
     """phase4 report + manifest 읽어서 점수 통과한 것만 라이브러리에 등록."""
     import json
 
@@ -116,6 +177,47 @@ def ingest_run(library: PromptLibrary, report_path: Path, manifest_path: Path, m
             model=job["model"],
             score=score or 1.0,
             audio_path=files[0] if files else None,
+            extras=extras,
         )
         added += 1
     return added
+
+
+def safe_ingest_run(
+    report_path: Path,
+    manifest_path: Path,
+    *,
+    min_score: float = 0.55,
+    extras: dict[str, Any] | None = None,
+) -> int:
+    try:
+        library = PromptLibrary()
+        return ingest_run(library, report_path, manifest_path, min_score=min_score, extras=extras)
+    except Exception as exc:
+        log.info("Prompt library ingest skipped: %s", exc)
+        return 0
+
+
+def safe_add_prompt(
+    *,
+    prompt: str,
+    category: str,
+    model: str,
+    score: float,
+    audio_path: str | None = None,
+    extras: dict[str, Any] | None = None,
+) -> bool:
+    try:
+        library = PromptLibrary()
+        library.add(
+            prompt=prompt,
+            category=category,
+            model=model,
+            score=score,
+            audio_path=audio_path,
+            extras=extras,
+        )
+        return True
+    except Exception as exc:
+        log.info("Prompt library add skipped: %s", exc)
+        return False
